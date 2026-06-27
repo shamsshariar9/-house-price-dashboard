@@ -1,41 +1,49 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 
-st.set_page_config(page_title="Student Dashboard", layout="wide")
+st.set_page_config(page_title="House Price Prediction Dashboard", layout="wide")
 
-st.title("🎓 Student Performance Dashboard")
+st.title("🏠 House Price Prediction Dashboard")
 
-data = {
-    "Student": ["Ali", "Sara", "John", "Aina", "David"],
-    "Math": [85, 92, 78, 88, 95],
-    "Science": [90, 89, 80, 91, 87],
-    "English": [88, 94, 75, 90, 85]
-}
+# Load dataset
+df = pd.read_csv("HousingData.csv")
 
-df = pd.DataFrame(data)
+# Features
+X = df[["RM", "LSTAT"]]
+y = df["MEDV"]
 
-st.subheader("Student Scores")
-st.dataframe(df)
+# Train model
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-col1, col2, col3 = st.columns(3)
-col1.metric("Students", len(df))
-col2.metric("Average Math", round(df["Math"].mean(), 2))
-col3.metric("Average Science", round(df["Science"].mean(), 2))
+model = LinearRegression()
+model.fit(X_train, y_train)
 
-student = st.selectbox("Select Student", df["Student"])
+# Prediction
+st.subheader("🔮 Predict House Price")
 
-selected = df[df["Student"] == student]
+rm = st.slider("Average Rooms (RM)", float(df["RM"].min()), float(df["RM"].max()), float(df["RM"].mean()))
+lstat = st.slider("Lower Status % (LSTAT)", float(df["LSTAT"].min()), float(df["LSTAT"].max()), float(df["LSTAT"].mean()))
 
-scores = selected[["Math", "Science", "English"]].iloc[0]
+pred = model.predict([[rm, lstat]])
+
+st.success(f"Predicted House Price: ${pred[0]:.2f}k")
+
+# Data preview
+st.subheader("📊 Dataset Preview")
+st.dataframe(df.head())
+
+# Graph
+st.subheader("📈 Actual vs Predicted")
+
+y_pred = model.predict(X_test)
 
 fig, ax = plt.subplots()
-ax.bar(scores.index, scores.values)
-ax.set_ylabel("Score")
-ax.set_ylim(0, 100)
+ax.scatter(y_test, y_pred)
+ax.set_xlabel("Actual")
+ax.set_ylabel("Predicted")
 
 st.pyplot(fig)
-
-st.subheader("Class Average")
-avg_scores = df[["Math", "Science", "English"]].mean()
-st.bar_chart(avg_scores)
