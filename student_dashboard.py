@@ -12,6 +12,15 @@ st.title("🏠 House Price Prediction Dashboard")
 # Load dataset
 df = pd.read_csv("HousingData.csv")
 
+# STEP 1: Clean missing values
+df = df.dropna()
+
+# STEP 2: Keep only numeric columns
+df = df.select_dtypes(include=['number'])
+
+# STEP 3: Reset index (important for Streamlit)
+df = df.reset_index(drop=True)
+
 # Features
 X = df[["RM", "LSTAT"]]
 y = df["MEDV"]
