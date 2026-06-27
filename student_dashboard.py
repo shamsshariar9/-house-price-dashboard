@@ -43,9 +43,21 @@ model.fit(X_train, y_train)
 # Prediction
 st.subheader("🔮 Predict House Price")
 
-rm = st.slider("Average Rooms (RM)", float(df["RM"].min()), float(df["RM"].max()), float(df["RM"].mean()))
-lstat = st.slider("Lower Status % (LSTAT)", float(df["LSTAT"].min()), float(df["LSTAT"].max()), float(df["LSTAT"].mean()))
+st.sidebar.header("🏠 Input Features")
 
+rm = st.sidebar.slider(
+    "Average Number of Rooms (RM)",
+    float(df["RM"].min()),
+    float(df["RM"].max()),
+    float(df["RM"].mean())
+)
+
+lstat = st.sidebar.slider(
+    "Lower Status Population (%)",
+    float(df["LSTAT"].min()),
+    float(df["LSTAT"].max()),
+    float(df["LSTAT"].mean())
+)
 pred = model.predict([[rm, lstat]])
 
 st.success(f"Predicted House Price: ${pred[0]:.2f}k")
