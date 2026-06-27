@@ -2,6 +2,15 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+st.set_page_config(
+    page_title="House Price AI Dashboard",
+    layout="wide",
+    page_icon="🏠"
+)
+
+st.title("🏠 House Price Prediction AI Dashboard")
+st.markdown("### 📊 Predict house prices using Machine Learning (Linear Regression)")
+st.divider()
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
